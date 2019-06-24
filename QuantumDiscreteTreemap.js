@@ -24,6 +24,8 @@
  * miniature has always same size, or, for example, visualize state of
  * many items of particular type
  *
+ * I added horizontal and vertical padding to the algorithm, by using this
+ * separation between rectangles, or preserving space for labels is possible.
  *
  * Because original code was published on Mozilla Public License, I also
  * have to publish it on Mozilla Public License, and additionally, I have
@@ -117,18 +119,26 @@ class QuantumTreemap {
     numSnake4Layouts;
     numSnake5Layouts;
     resultRects = null;
+    horizontalPadding;
+    verticalPadding;
 
 
     /**
      * @param {Number[]} sizes Array of values to show on treemap
      * @param {Number} iar ideal aspect ratio
      * @param {Rectangle} box to fit layout
+     * @param {Number} horizontalPadding in units - this amount of units will be added to
+     *                                   width of each rectangle
+     * @param {Number} verticalPadding in units - this amount of units will be added to
+     *                                   height of each rectangle
      * @constructor
      */
-    constructor(sizes, iar, box) {
+    constructor(sizes, iar, box,horizontalPadding=0,verticalPadding=0) {
         this.origSizes = sizes;
         this.origBox = box;
         this.origiar = iar;
+        this.horizontalPadding=horizontalPadding;
+        this.verticalPadding=verticalPadding;
     }
 
 
@@ -260,6 +270,8 @@ class QuantumTreemap {
                 dim2 = this.computeTableLayout(sizes[1], boxAR * (1 - ratio));
                 h = Math.max(dim1.height, dim2.height);
                 dim2 = this.computeTableLayoutGivenHeight(sizes[1], h);
+                // h needs to be recomputed due to padding
+                h = Math.max(dim1.height, dim2.height);
                 boxes[0] = new Rectangle(box.x, box.y, dim1.width, h);
                 boxes[1] = new Rectangle(box.x + dim1.width, box.y, dim2.width, dim2.height);
             } else {
@@ -267,6 +279,8 @@ class QuantumTreemap {
                 dim2 = this.computeTableLayout(sizes[1], boxAR / (1 - ratio));
                 w = Math.max(dim1.width, dim2.width);
                 dim2 = this.computeTableLayoutGivenWidth(sizes[1], w);
+                // w needs to be recomputed due to padding
+                w = Math.max(dim1.width, dim2.width);
                 boxes[0] = new Rectangle(box.x, box.y, w, dim1.height);
                 boxes[1] = new Rectangle(box.x, box.y + dim1.height, dim2.width, dim2.height);
             }
@@ -730,7 +744,7 @@ class QuantumTreemap {
             }
         }
 
-        return new Dimension(w, h);
+        return new Dimension(w+this.horizontalPadding, h+this.verticalPadding);
     }
 
     /**
@@ -747,7 +761,7 @@ class QuantumTreemap {
         }
         h = Math.ceil(numItems / width);
 
-        return new Dimension(width, h);
+        return new Dimension(width+this.horizontalPadding, h+this.verticalPadding);
     }
 
     /**
@@ -762,6 +776,6 @@ class QuantumTreemap {
             height = 1;
         }
         w = Math.ceil(numItems / height);
-        return new Dimension(w, height);
+        return new Dimension(w+this.horizontalPadding, height+this.verticalPadding);
     }
 }
