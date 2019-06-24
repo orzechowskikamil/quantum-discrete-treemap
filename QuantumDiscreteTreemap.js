@@ -306,7 +306,7 @@ class QuantumTreemap {
                 }
                 l1boxes = this._quantumLayout(l1, r1, newGrowWide);
             } else {
-                l1boxes = new Rectangle[1];
+                l1boxes =[];
                 l1boxes[0] = r1;
             }
             l1finalbox = this.computeUnion(l1boxes);
@@ -475,7 +475,7 @@ class QuantumTreemap {
      */
     computePivotIndex(sizes) {
         var index = 0;
-        index = (sizes.length - 1) / 2;
+        index =Math.floor((sizes.length - 1) / 2);
 
         return index;
     }
