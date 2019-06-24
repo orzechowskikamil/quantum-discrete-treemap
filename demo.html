@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script src="QuantumDiscreteTreemap.js"></script>
+    <script>
+
+
+        // First check arg options
+        var w = 600;
+        var h = 300;
+        var sizes = [10, 20, 30, 40, 50];
+
+        var box = new Rectangle(0, 0, w, h);
+        var qt = new QuantumTreemap(sizes, 0.5, box);
+        var rects = qt.quantumLayout();
+
+        console.log(rects);
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
