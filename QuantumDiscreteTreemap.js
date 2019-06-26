@@ -5,15 +5,19 @@
  *
  * I prefer name Discrete treemap because by this keyword I tried to find
  * this algorithm for two weeks, until I accidentally found it named
- * Quantum Treemap.
+ * Quantum Treemap. So, final name is Quantum Discrete Treemap.
  *
  * It's javascript port of Quantum Treemap algorithm, originally written in Java by
  * professor Benjamin B. Benderson in 2001 year. Original algorithm's
  * implementation was 1100 lines long, this version is shortened by removal
  * of debug and findAlternativeLayouts methods.
  *
+ * Source code for original implementation in Java is here:
+ * https://www.cs.umd.edu/hcil/photomesa/download/quantum-treemap-source.zip
+ *
  * Seems that algorithm was completely forgotten: in 2019 year, original Java
- * implementation from 2001 is only one existing in the internet.
+ * implementation from 2001 is only one existing in the internet, while this
+ * algorithm is surprisingly useful for some usecases.
  *
  * Quantum Treemap is algorithm which calculate treemap layout, considering
  * fact that values are not represented by rectangles which sides can be
@@ -22,7 +26,12 @@
  * rectangle can be no smaller than one rectangle's side. It's ideal
  * to display for example directories which contains photos, while photo
  * miniature has always same size, or, for example, visualize state of
- * many items of particular type
+ * many items of particular type.
+ *
+ * Warning: this implementation, as original, allows only one level of nesting.
+ *
+ * Original publication for Quantum Treemap:
+ * https://www.cs.umd.edu/hcil/photomesa/download/layout-algorithms.shtml
  *
  * I added horizontal and vertical padding to the algorithm, by using this
  * separation between rectangles, or preserving space for labels is possible.
@@ -50,16 +59,15 @@
  */
 
 
-
-
 /**
  * Such class exist in Java, here it needs to be polyfilled
  */
 class Rectangle {
-    x;
-    y;
-    width;
-    height;
+    // class properties are still experimental
+    // x;
+    // y;
+    // width;
+    // height;
 
     constructor(arg1, arg2, arg3, arg4) {
         if (typeof arg1 === 'undefined') {
@@ -97,8 +105,9 @@ System.arraycopy = (source, sourceStartIndex, destination, destinationStartIndex
  * Another polyfill for java class. Dimension is just width x height
  */
 class Dimension {
-    width;
-    height;
+    // class properties are still experimental
+    // width;
+    // height;
 
     constructor(width, height) {
         this.width = width;
@@ -106,22 +115,19 @@ class Dimension {
     }
 }
 
-class QuantumTreemap {
-
-    EXPECTED_WASTE_FACTOR = 1.15;
-
-
-    origSizes;
-    origBox;
-    origiar;
-    numQuadLayouts;
-    numSnake3Layouts;
-    numSnake4Layouts;
-    numSnake5Layouts;
-    resultRects = null;
-    horizontalPadding;
-    verticalPadding;
-
+ class QuantumDiscreteTreemap {
+    // class properties are still experimental
+    // EXPECTED_WASTE_FACTOR;
+    // origSizes;
+    // origBox;
+    // origiar;
+    // numQuadLayouts;
+    // numSnake3Layouts;
+    // numSnake4Layouts;
+    // numSnake5Layouts;
+    // resultRects = null;
+    // horizontalPadding;
+    // verticalPadding;
 
     /**
      * @param {Number[]} sizes Array of values to show on treemap
@@ -133,12 +139,13 @@ class QuantumTreemap {
      *                                   height of each rectangle
      * @constructor
      */
-    constructor(sizes, iar, box,horizontalPadding=0,verticalPadding=0) {
+    constructor(sizes, iar, box, horizontalPadding = 0, verticalPadding = 0) {
+        this.EXPECTED_WASTE_FACTOR=1.15;
         this.origSizes = sizes;
         this.origBox = box;
         this.origiar = iar;
-        this.horizontalPadding=horizontalPadding;
-        this.verticalPadding=verticalPadding;
+        this.horizontalPadding = horizontalPadding;
+        this.verticalPadding = verticalPadding;
     }
 
 
@@ -213,7 +220,8 @@ class QuantumTreemap {
      *
      * @param {Number[]} sizes Array of values
      * @param {Rectangle} box Box to fit
-     * @param {Boolean} growWide ??
+     * @param {Boolean} growWide Probably information if layout should enlarge horizontally to fit
+     *                           if true, otherwise layout will grow vertical
      * @returns {Rectangle[]} layout composed from rectangles
      */
     _quantumLayout(sizes, box, growWide) {
@@ -257,7 +265,11 @@ class QuantumTreemap {
         // Stopping conditions
         if (sizes.length === 1) {
             boxes = [];
-            boxes[0] = box;
+            boxes[0] = new Rectangle(
+                box.x,
+                box.y,
+                box.width + this.horizontalPadding,
+                box.height + this.verticalPadding);
 
             return boxes;
         }
@@ -320,7 +332,7 @@ class QuantumTreemap {
                 }
                 l1boxes = this._quantumLayout(l1, r1, newGrowWide);
             } else {
-                l1boxes =[];
+                l1boxes = [];
                 l1boxes[0] = r1;
             }
             l1finalbox = this.computeUnion(l1boxes);
@@ -489,7 +501,7 @@ class QuantumTreemap {
      */
     computePivotIndex(sizes) {
         var index = 0;
-        index =Math.floor((sizes.length - 1) / 2);
+        index = Math.floor((sizes.length - 1) / 2);
 
         return index;
     }
@@ -744,7 +756,7 @@ class QuantumTreemap {
             }
         }
 
-        return new Dimension(w+this.horizontalPadding, h+this.verticalPadding);
+        return new Dimension(w + this.horizontalPadding, h + this.verticalPadding);
     }
 
     /**
@@ -761,7 +773,7 @@ class QuantumTreemap {
         }
         h = Math.ceil(numItems / width);
 
-        return new Dimension(width+this.horizontalPadding, h+this.verticalPadding);
+        return new Dimension(width + this.horizontalPadding, h + this.verticalPadding);
     }
 
     /**
@@ -776,6 +788,6 @@ class QuantumTreemap {
             height = 1;
         }
         w = Math.ceil(numItems / height);
-        return new Dimension(w+this.horizontalPadding, height+this.verticalPadding);
+        return new Dimension(w + this.horizontalPadding, height + this.verticalPadding);
     }
 }

@@ -1,16 +1,15 @@
 <html>
 <head>
-    <script src="QuantumDiscreteTreemap.js"></script>
+    <script src="QuantumDiscreteTreemap.es5.js"></script>
     <script>
 
 
-        // First check arg options
+
         var w = 600;
         var h = 300;
         var sizes = [9, 12, 44, 74, 16, 74, 19, 6, 25, 76, 29, 36, 14, 38, 96, 7, 73];
 
-        var box = new Rectangle(0, 0, w, h);
-        var qt = new QuantumTreemap(sizes, 0.5, box);
+        var qt = new exports.QuantumDiscreteTreemap(sizes, 1, {x:0, y:0, width:w, height:h},0,0);
         var rects = qt.quantumLayout();
 
         console.log(rects);
