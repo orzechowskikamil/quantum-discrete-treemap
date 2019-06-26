@@ -1,6 +1,6 @@
 {
   "name": "quantum-discrete-treemap",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "QuantumDiscreteTreemap is layout calculation algorithm, which is similar to treemap, but values are represented by indivisible (quantum/discrete) items.",
   "main": "QuantumDiscreteTreemap.js",
   "scripts": {

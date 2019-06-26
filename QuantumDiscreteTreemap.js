@@ -115,7 +115,7 @@ class Dimension {
     }
 }
 
- class QuantumDiscreteTreemap {
+ export class QuantumDiscreteTreemap {
     // class properties are still experimental
     // EXPECTED_WASTE_FACTOR;
     // origSizes;
