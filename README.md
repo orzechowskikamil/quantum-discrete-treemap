@@ -1,5 +1,9 @@
 # quantum-discrete-treemap
 
+demo:
+
+https://orzechowskikamil.github.io/quantum-discrete-treemap/
+
 I prefer name Discrete treemap because by this keyword I tried to find
 this algorithm for two weeks, until I accidentally found it named
 Quantum Treemap. So, final name is Quantum Discrete Treemap.
