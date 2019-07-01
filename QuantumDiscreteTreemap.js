@@ -94,7 +94,7 @@ class Rectangle {
 /**
  * Polyfill for another java method
  */
-System = {};
+const System = {};
 System.arraycopy = (source, sourceStartIndex, destination, destinationStartIndex, length) => {
     for (var i = 0; i < length; i++) {
         destination[i + destinationStartIndex] = source[i + sourceStartIndex];
