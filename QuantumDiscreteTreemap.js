@@ -733,7 +733,7 @@ class Dimension {
             if (h === 0) {
                 h = 1;
             }
-            w = (numItems / h);
+            w = Math.floor(numItems / h);
             if ((h * w) < numItems) {
                 w++;
                 h--;
@@ -746,7 +746,7 @@ class Dimension {
             if (w === 0) {
                 w = 1;
             }
-            h = (numItems / w);
+            h =  Math.floor(numItems / w);
             if ((h * w) < numItems) {
                 h++;
                 w--;
