@@ -26,11 +26,23 @@
     <script type="module">
         import {QuantumDiscreteTreemap} from "./QuantumDiscreteTreemap.js"
 
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let sizes = [];
+        const amountOfGroups = getRandomInt(5, 15);
+        for (let i = 0; i < amountOfGroups; i++) {
+            sizes.push(getRandomInt(1, 40));
+        }
+
         const itemSize = 10;
 
         var w = 600;
         var h = 300;
-        var sizes = [9, 12, 44, 74, 16, 74, 19, 6, 25, 76, 29, 36, 14, 38, 96, 7, 73];
+//        sizes = [9, 12, 44, 74, 16, 74, 19, 6, 25, 76, 29, 36, 14, 38, 96, 7, 73];
 
         var qt = new QuantumDiscreteTreemap(sizes, 1, {
             x: 0,
