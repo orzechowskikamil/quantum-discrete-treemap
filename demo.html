@@ -1,8 +1,32 @@
 <html>
 <head>
+    <style>
+        #demo {
+            position: relative;
+        }
+
+        .group {
+            border: 1px solid black;
+            box-sizing: border-box;
+            background-color: red;
+            position: absolute;
+        }
+
+        .item {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin: 1px;
+            border: 1px solid black;
+            box-sizing: border-box;
+            background-color: yellow;
+            border-radius: 8px;
+        }
+    </style>
     <script type="module">
         import {QuantumDiscreteTreemap} from "./QuantumDiscreteTreemap.js"
 
+        const itemSize = 10;
 
         var w = 600;
         var h = 300;
@@ -18,9 +42,31 @@
 
         console.log(rects);
 
+        const inputDataDom = document.querySelector('#input-data');
+        const demoDom = document.querySelector('#demo');
+
+        inputDataDom.innerText = sizes.toString();
+        rects.map((rect, i) => {
+            let groupDom = document.createElement('div');
+            groupDom.setAttribute('class', 'group');
+            groupDom.style.left = rect.x * itemSize;
+            groupDom.style.top = rect.y * itemSize;
+            groupDom.style.width = rect.width * itemSize;
+            groupDom.style.height = rect.height * itemSize;
+            demoDom.appendChild(groupDom);
+
+            for (let j = 0; j < sizes[i]; j++) {
+                let itemDom = document.createElement('div');
+                itemDom.setAttribute('class', 'item');
+                groupDom.appendChild(itemDom);
+            }
+
+        });
+
     </script>
 </head>
 <body>
-
+<div id="label">Quantum Treemap for data: [<span id="input-data"></span>]</div>
+<div id="demo"></div>
 </body>
 </html>
