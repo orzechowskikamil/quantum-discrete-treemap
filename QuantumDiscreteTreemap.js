@@ -115,7 +115,7 @@ class Dimension {
     }
 }
 
- export class QuantumDiscreteTreemap {
+export class QuantumDiscreteTreemap {
     // class properties are still experimental
     // EXPECTED_WASTE_FACTOR;
     // origSizes;
@@ -139,13 +139,14 @@ class Dimension {
      *                                   height of each rectangle
      * @constructor
      */
-    constructor(sizes, iar, box, horizontalPadding = 0, verticalPadding = 0) {
-        this.EXPECTED_WASTE_FACTOR=1.15;
+    constructor(sizes, iar, box, horizontalPadding = 0, verticalPadding = 0, maxHeight = null) {
+        this.EXPECTED_WASTE_FACTOR = 1.15;
         this.origSizes = sizes;
         this.origBox = box;
         this.origiar = iar;
         this.horizontalPadding = horizontalPadding;
         this.verticalPadding = verticalPadding;
+        this.maxHeight = maxHeight;
     }
 
 
@@ -210,6 +211,10 @@ class Dimension {
 
         var boxAR = this.computeAspectRatio(box);
         var growWide = ((boxAR >= 1) ? true : false);
+        if (this.maxHeight) {
+            box.height = this.maxHeight;
+            growWide = true;
+        }
         this.resultRects = this._quantumLayout(this.origSizes, box, growWide);
 
         return this.resultRects;
@@ -330,6 +335,9 @@ class Dimension {
                 } else {
                     newGrowWide = ((r1AR >= 1) ? true : false);
                 }
+                if (this.maxHeight) {
+                    newGrowWide = true;
+                }
                 l1boxes = this._quantumLayout(l1, r1, newGrowWide);
             } else {
                 l1boxes = [];
@@ -417,6 +425,9 @@ class Dimension {
                 } else {
                     newGrowWide = ((r2AR >= 1));
                 }
+                if (this.maxHeight) {
+                    newGrowWide = true;
+                }
                 l2boxes = this._quantumLayout(l2, r2, newGrowWide);
             } else {
                 l2boxes = [];
@@ -430,6 +441,9 @@ class Dimension {
                     newGrowWide = growWide;
                 } else {
                     newGrowWide = ((r3AR >= 1));
+                }
+                if (this.maxHeight) {
+                    newGrowWide = true;
                 }
                 l3boxes = this._quantumLayout(l3, r3, newGrowWide);
             } else if (l3.length === 1) {
@@ -746,7 +760,7 @@ class Dimension {
             if (w === 0) {
                 w = 1;
             }
-            h =  Math.floor(numItems / w);
+            h = Math.floor(numItems / w);
             if ((h * w) < numItems) {
                 h++;
                 w--;
