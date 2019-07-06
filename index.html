@@ -10,12 +10,23 @@
             box-sizing: border-box;
             background-color: red;
             position: absolute;
+            overflow: hidden;
+            padding-top: 18px;
+            box-sizing: border-box;
+        }
+
+        .group>span{
+            position: absolute;
+            left:0;
+            top:0;
+            white-space:nowrap;
+            color:white;
         }
 
         .item {
             display: inline-block;
-            width: 7px;
-            height: 7px;
+            width: 16px;
+            height: 16px;
             margin: 1px;
             border: 1px solid black;
             box-sizing: border-box;
@@ -25,6 +36,10 @@
     </style>
     <script type="module">
         import {QuantumDiscreteTreemap} from "./QuantumDiscreteTreemap.js"
+
+        const inputDataDom = document.querySelector('#input-data');
+        const demoDom = document.querySelector('#demo');
+
 
         function getRandomInt(min, max) {
             min = Math.ceil(min);
@@ -37,44 +52,46 @@
         for (let i = 0; i < amountOfGroups; i++) {
             sizes.push(getRandomInt(1, 40));
         }
+        //        sizes = [29, 37, 1, 5, 37, 24, 39, 5];
 
-        const itemSize = 10;
-
-        var w = 600;
-        var h = 300;
-//        sizes = [9, 12, 44, 74, 16, 74, 19, 6, 25, 76, 29, 36, 14, 38, 96, 7, 73];
-
-        var qt = new QuantumDiscreteTreemap(sizes, 1, {
-            x: 0,
-            y: 0,
-            width: w,
-            height: h
-        }, 0,0 ,10);
-        var rects = qt.quantumLayout();
-
-        console.log(rects);
-
-        const inputDataDom = document.querySelector('#input-data');
-        const demoDom = document.querySelector('#demo');
 
         inputDataDom.innerText = sizes.toString();
-        rects.map((rect, i) => {
-            let groupDom = document.createElement('div');
-            groupDom.setAttribute('class', 'group');
-            groupDom.style.left = rect.x * itemSize;
-            groupDom.style.top = rect.y * itemSize;
-            groupDom.style.width = rect.width * itemSize;
-            groupDom.style.height = rect.height * itemSize;
-            demoDom.appendChild(groupDom);
 
-            for (let j = 0; j < sizes[i]; j++) {
-                let itemDom = document.createElement('div');
-                itemDom.setAttribute('class', 'item');
-                groupDom.appendChild(itemDom);
-            }
+        setTimeout(() => {
+            const itemSize = 20;
 
-        });
+            var w = 600;
+            var h = 300;
 
+            var qt = new QuantumDiscreteTreemap(sizes, 1, {
+                x: 0,
+                y: 0,
+                width: w,
+                height: h
+            }, 1, 2, 12);
+            var rects = qt.quantumLayout();
+
+            console.log(rects);
+
+            rects.map((rect, i) => {
+                let groupDom = document.createElement('div');
+                groupDom.setAttribute('class', 'group');
+                groupDom.style.left = (rect.x) * itemSize;
+                groupDom.style.top = rect.y * itemSize;
+                groupDom.style.width = (rect.width - 1) * itemSize;
+                groupDom.style.height = (rect.height - 1) * itemSize;
+                demoDom.appendChild(groupDom);
+                const labelDom = document.createElement('span');
+                labelDom.innerHTML =  sizes[i] + " items.";
+                groupDom.appendChild(labelDom)
+
+                for (let j = 0; j < sizes[i]; j++) {
+                    let itemDom = document.createElement('div');
+                    itemDom.setAttribute('class', 'item');
+                    groupDom.appendChild(itemDom);
+                }
+            });
+        }, 100);
     </script>
 </head>
 <body>

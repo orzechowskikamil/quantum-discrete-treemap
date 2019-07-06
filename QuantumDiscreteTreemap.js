@@ -194,6 +194,16 @@ export class QuantumDiscreteTreemap {
     }
 
 
+    _quantumLayoutAutogrow(a, b, c) {
+        do {
+            try {
+                return this._quantumLayout(a, b, c);
+            } catch (e) {
+                b.width++;
+            }
+        } while (true);
+    }
+
     /**
      * @returns {Rectangle[]}
      */
@@ -267,28 +277,43 @@ export class QuantumDiscreteTreemap {
         boxAR = this.computeAspectRatio(box);
 
 
-        // Stopping conditions
+        // Single rectangle case
         if (sizes.length === 1) {
             boxes = [];
-            boxes[0] = new Rectangle(
-                box.x,
-                box.y,
-                box.width + this.horizontalPadding,
-                box.height + this.verticalPadding);
+            if (this.maxHeight) {
+                boxes[0] = new Rectangle(
+                    box.x,
+                    box.y,
+                    this.computeTableLayoutGivenHeight(sizes[0], box.height),
+                    box.height);
+            } else {
+                boxes[0] = new Rectangle(
+                    box.x,
+                    box.y,
+                    box.width + this.horizontalPadding,
+                    box.height + this.verticalPadding);
+            }
 
             return boxes;
         }
 
+        // Two rectangles case
         if (sizes.length === 2) {
             boxes = [];
             ratio = sizes[0] / (sizes[0] + sizes[1]);
             if (growWide) {
-                dim1 = this.computeTableLayout(sizes[0], boxAR * ratio);
-                dim2 = this.computeTableLayout(sizes[1], boxAR * (1 - ratio));
-                h = Math.max(dim1.height, dim2.height);
-                dim2 = this.computeTableLayoutGivenHeight(sizes[1], h);
-                // h needs to be recomputed due to padding
-                h = Math.max(dim1.height, dim2.height);
+                if (this.maxHeight) {
+                    dim1 = this.computeTableLayoutGivenHeight(sizes[0], box.height);
+                    dim2 = this.computeTableLayoutGivenHeight(sizes[1], box.height);
+                    h = box.height;
+                } else {
+                    dim1 = this.computeTableLayout(sizes[0], boxAR * ratio);
+                    dim2 = this.computeTableLayout(sizes[1], boxAR * (1 - ratio));
+                    h = Math.max(dim1.height, dim2.height);
+                    dim2 = this.computeTableLayoutGivenHeight(sizes[1], h);
+                    // h needs to be recomputed due to padding
+                    h = Math.max(dim1.height, dim2.height);
+                }
                 boxes[0] = new Rectangle(box.x, box.y, dim1.width, h);
                 boxes[1] = new Rectangle(box.x + dim1.width, box.y, dim2.width, dim2.height);
             } else {
@@ -305,7 +330,7 @@ export class QuantumDiscreteTreemap {
             return boxes;
         }
 
-        // First, compute R1
+        // More than two rectangles case
         if (pivotIndex > 0) {
             l1 = [];
             System.arraycopy(sizes, 0, l1, 0, pivotIndex);
@@ -338,7 +363,8 @@ export class QuantumDiscreteTreemap {
                 if (this.maxHeight) {
                     newGrowWide = true;
                 }
-                l1boxes = this._quantumLayout(l1, r1, newGrowWide);
+
+                l1boxes = this._quantumLayoutAutogrow(l1, r1, newGrowWide);
             } else {
                 l1boxes = [];
                 l1boxes[0] = r1;
@@ -360,23 +386,35 @@ export class QuantumDiscreteTreemap {
         var bestIndex = 0;
 
         for (i = pivotIndex + 1; i < sizes.length; i++) {
-            l2Size = this.computeSize3(sizes, pivotIndex + 1, i);
-            ratio = pivotSize / (pivotSize + l2Size);
-            if (growWide) {
-                h1 = Math.ceil(ratio * box2.height);
-                dim1 = this.computeTableLayoutGivenHeight(pivotSize, h1);
-            } else {
-                w1 = Math.ceil(ratio * box2.width);
-                dim1 = this.computeTableLayoutGivenWidth(pivotSize, w1);
-            }
-            pivotAR = Math.max(( dim1.width / dim1.height),
-                ( dim1.height / dim1.width));
-            if (first || (pivotAR < bestAR)) {
-                first = false;
-                bestAR = pivotAR;
-                bestdim1 = dim1;
-                bestl2Size = l2Size;
-                bestIndex = i;
+            try {
+                l2Size = this.computeSize3(sizes, pivotIndex + 1, i);
+                ratio = pivotSize / (pivotSize + l2Size);
+                if (growWide) {
+                    h1 = Math.ceil(ratio * box2.height);
+                    if (this.maxHeight) {
+                        const minimalValidHeight = 1 + this.verticalPadding
+                        if (h1 < minimalValidHeight) {
+                            h1 = minimalValidHeight;
+                        }
+                        if (h1 > box.height - minimalValidHeight) {
+                            h1 = box.height - minimalValidHeight;
+                        }
+                    }
+                    dim1 = this.computeTableLayoutGivenHeight(pivotSize, h1);
+                } else {
+                    w1 = Math.ceil(ratio * box2.width);
+                    dim1 = this.computeTableLayoutGivenWidth(pivotSize, w1);
+                }
+                pivotAR = Math.max(( dim1.width / dim1.height),
+                    ( dim1.height / dim1.width));
+                if (first || (pivotAR < bestAR)) {
+                    first = false;
+                    bestAR = pivotAR;
+                    bestdim1 = dim1;
+                    bestl2Size = l2Size;
+                    bestIndex = i;
+                }
+            } catch (e) {
             }
         }
         if (bestIndex > 0) {
@@ -428,7 +466,7 @@ export class QuantumDiscreteTreemap {
                 if (this.maxHeight) {
                     newGrowWide = true;
                 }
-                l2boxes = this._quantumLayout(l2, r2, newGrowWide);
+                l2boxes = this._quantumLayoutAutogrow(l2, r2, newGrowWide);
             } else {
                 l2boxes = [];
                 l2boxes[0] = r2;
@@ -445,7 +483,7 @@ export class QuantumDiscreteTreemap {
                 if (this.maxHeight) {
                     newGrowWide = true;
                 }
-                l3boxes = this._quantumLayout(l3, r3, newGrowWide);
+                l3boxes = this._quantumLayoutAutogrow(l3, r3, newGrowWide);
             } else if (l3.length === 1) {
                 l3boxes = [];
                 l3boxes[0] = r3;
@@ -798,8 +836,11 @@ export class QuantumDiscreteTreemap {
     computeTableLayoutGivenHeight(numItems, height) {
         var w;
 
+        height -= this.verticalPadding;
+
+
         if (height < 1) {
-            height = 1;
+            throw new Error("Not enough height")
         }
         w = Math.ceil(numItems / height);
         return new Dimension(w + this.horizontalPadding, height + this.verticalPadding);
