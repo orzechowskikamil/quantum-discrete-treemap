@@ -143,7 +143,7 @@ export class QuantumDiscreteTreemap {
      *                                   height of each rectangle
      * @constructor
      */
-    constructor(sizes, iar, box, horizontalPadding = 0, verticalPadding = 0, maxHeight = null) {
+    constructor(sizes, iar, box, horizontalPadding = 0, verticalPadding = 0, maxHeight = null, minimalWidth = null) {
         this.EXPECTED_WASTE_FACTOR = 1.15;
         this.origSizes = sizes;
         this.origBox = box;
@@ -151,6 +151,7 @@ export class QuantumDiscreteTreemap {
         this.horizontalPadding = horizontalPadding;
         this.verticalPadding = verticalPadding;
         this.maxHeight = maxHeight;
+        this.minimalWidth = minimalWidth;
     }
 
 
@@ -824,6 +825,9 @@ export class QuantumDiscreteTreemap {
                 h = 1;
             }
             w = Math.floor(numItems / h);
+            if (w < this.minimalWidth) {
+                w = this.minimalWidth;
+            }
             if ((h * w) < numItems) {
                 w++;
                 h--;
@@ -833,8 +837,8 @@ export class QuantumDiscreteTreemap {
             }
         } else {
             w = Math.ceil(Math.sqrt(numItems * ar));
-            if (w === 0) {
-                w = 1;
+            if (w < this.minimalWidth) {
+                w = this.minimalWidth;
             }
             h = Math.floor(numItems / w);
             if ((h * w) < numItems) {
@@ -858,11 +862,11 @@ export class QuantumDiscreteTreemap {
     computeTableLayoutGivenWidth(numItems, width) {
         var h;
 
-        if (width < 1) {
-            width = 1;
+        if (width < this.minimalWidth) {
+            width = this.minimalWidth;
         }
-        h = Math.ceil(numItems / width);
 
+        h = Math.ceil(numItems / width);
         return new Dimension(width + this.horizontalPadding, h + this.verticalPadding);
     }
 
@@ -886,6 +890,9 @@ export class QuantumDiscreteTreemap {
             }
         }
         w = Math.ceil(numItems / height);
+        if (w < this.minimalWidth) {
+            w = this.minimalWidth;
+        }
         return new Dimension(w + this.horizontalPadding, height + this.verticalPadding);
     }
 }

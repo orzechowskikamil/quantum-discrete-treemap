@@ -15,12 +15,12 @@
             box-sizing: border-box;
         }
 
-        .group>span{
+        .group > span {
             position: absolute;
-            left:0;
-            top:0;
-            white-space:nowrap;
-            color:white;
+            left: 0;
+            top: 0;
+            white-space: nowrap;
+            color: white;
         }
 
         .item {
@@ -67,7 +67,7 @@
                 y: 0,
                 width: w,
                 height: h
-            }, 1, 2,20);
+            }, 1, 2, 12, 2);
             var rects = qt.quantumLayout();
 
             console.log(rects);
@@ -81,7 +81,7 @@
                 groupDom.style.height = (rect.height - 1) * itemSize;
                 demoDom.appendChild(groupDom);
                 const labelDom = document.createElement('span');
-                labelDom.innerHTML =  sizes[i] + " items.";
+                labelDom.innerHTML = sizes[i] + " items.";
                 groupDom.appendChild(labelDom)
 
                 for (let j = 0; j < sizes[i]; j++) {
