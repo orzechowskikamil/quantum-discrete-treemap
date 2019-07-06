@@ -836,11 +836,16 @@ export class QuantumDiscreteTreemap {
     computeTableLayoutGivenHeight(numItems, height) {
         var w;
 
-        height -= this.verticalPadding;
+        if (this.maxHeight) {
+            height -= this.verticalPadding;
 
-
-        if (height < 1) {
-            throw new Error("Not enough height")
+            if (height < 1) {
+                throw new Error("Not enough height")
+            }
+        } else {
+            if (height < 1) {
+                height = 1;
+            }
         }
         w = Math.ceil(numItems / height);
         return new Dimension(w + this.horizontalPadding, height + this.verticalPadding);
