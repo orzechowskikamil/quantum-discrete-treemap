@@ -52,7 +52,6 @@
         for (let i = 0; i < amountOfGroups; i++) {
             sizes.push(getRandomInt(1, 40));
         }
-        //        sizes = [29, 37, 1, 5, 37, 24, 39, 5];
 
 
         inputDataDom.innerText = sizes.toString();
@@ -68,7 +67,7 @@
                 y: 0,
                 width: w,
                 height: h
-            }, 1, 2);
+            }, 1, 2,20);
             var rects = qt.quantumLayout();
 
             console.log(rects);

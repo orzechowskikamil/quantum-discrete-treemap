@@ -198,12 +198,46 @@ export class QuantumDiscreteTreemap {
     }
 
 
-    _quantumLayoutAutogrow(a, b, c) {
+    /**
+     * It's my addition to algorithm. This function wrap standard call to quantumLayout.
+     * When maxHeight is enabled (height constraint), applying padding to rectangles is not
+     * done outside, but inside. When rectangle is shorter than padding+1 (at least 1 row
+     * is needed to place inside something), error is thrown.
+     * This error is catch here, and it's signal to retry calculating quantumLayout but with
+     * box which is wider by 1 unit. Maybe after such modification there will be enough place
+     * for all rectangles. Process is continued until success. If you ecounter infinite loop,
+     * for sure it's happening here.
+     * Without this addition, height constraint doesn't work with padding (padding enlarges
+     * overall graph).
+     *
+     * When height costraint is disabled, everything works like in original implementation,
+     * Error is never thrown.
+     * @param sizes
+     * @param box
+     * @param growWide
+     * @returns {Rectangle[]}
+     * @private
+     */
+    _quantumLayoutAutogrow(sizes, box, growWide) {
         do {
+            if (this.maxHeight) {
+                // this code is experimental. Algorithm firstly try to grow
+                // vertically, and only when height is too big to fit a container,
+                // algorithm switch to standard method which is growing horizontally
+                // when height is too big to fit container
+                //
+                // this experimental code produces better layout with less amount of very
+                // tall and narrow rectangles.
+                const result = this._quantumLayout(sizes, box, false);
+                const dim = this.computeUnion(result);
+                if (dim.height < box.height) {
+                    return result;
+                }
+            }
             try {
-                return this._quantumLayout(a, b, c);
+                return this._quantumLayout(sizes, box, growWide);
             } catch (e) {
-                b.width++;
+                box.width++;
             }
         } while (true);
     }
