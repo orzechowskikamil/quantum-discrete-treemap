@@ -36,6 +36,10 @@
  * I added horizontal and vertical padding to the algorithm, by using this
  * separation between rectangles, or preserving space for labels is possible.
  *
+ * I also added option to force fixed height of quantum treemap. When using
+ * this option, rectangles are distributed less efficiently, but it's
+ * guaranteed that layout will not exceed given height (in units)
+ *
  * Because original code was published on Mozilla Public License, I also
  * have to publish it on Mozilla Public License, and additionally, I have
  * to include following header from original file:
