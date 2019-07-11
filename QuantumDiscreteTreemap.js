@@ -88,6 +88,11 @@ class Rectangle {
     }
 
     setRect(x, y, width, height) {
+        [x, y, width, height].forEach((arg) => {
+            if (typeof arg !== "number") {
+                throw new Error("Invalid argument provided to class Rectangle");
+            }
+        });
         this.x = x;
         this.y = y;
         this.width = width;
@@ -323,7 +328,7 @@ export class QuantumDiscreteTreemap {
                 boxes[0] = new Rectangle(
                     box.x,
                     box.y,
-                    this.computeTableLayoutGivenHeight(sizes[0], box.height),
+                    this.computeTableLayoutGivenHeight(sizes[0], box.height).width,
                     box.height);
             } else {
                 boxes[0] = new Rectangle(
